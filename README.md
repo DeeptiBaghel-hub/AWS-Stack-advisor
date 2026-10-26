@@ -4,7 +4,7 @@ A MERN-stack app that recommends an AWS architecture from a five-question
 quiz, renders it as a real branching diagram, and lets you compare any two
 of 25 catalogued AWS services head-to-head.
 
-[![CI](https://github.com/DeeptiBaghel-hub/aws-stack-advisor/actions/workflows/ci.yml/badge.svg)](https://github.com/DeeptiBaghel-hub/aws-stack-advisor/actions/workflows/ci.yml)
+[![CI](https://github.com/DeeptiBaghel-hub/AWS-Stack-advisor2/actions/workflows/ci.yml/badge.svg)](https://github.com/DeeptiBaghel-hub/AWS-Stack-advisor2/actions/workflows/ci.yml)
 
 **[Live demo →](#)** &nbsp;·&nbsp; _add your deployed URL here — see [DEPLOYMENT.md](./DEPLOYMENT.md)_
 
