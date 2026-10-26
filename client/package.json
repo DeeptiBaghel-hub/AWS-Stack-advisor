@@ -1,0 +1,24 @@
+{
+  "name": "aws-stack-advisor-client",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node src/utils/terraformGenerator.test.js"
+  },
+  "dependencies": {
+    "@sentry/browser": "^10.73.0",
+    "axios": "^1.7.4",
+    "jspdf": "^4.2.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hot-toast": "^2.6.0",
+    "react-router-dom": "^7.18.3"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.1"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "aws-stack-advisor-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AWS Stack Advisor - Monorepo root",
+  "scripts": {
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "dev": "node -e \"const { spawn } = require('child_process'); const s = spawn('npm', ['--prefix', 'server', 'run', 'dev'], { stdio: 'inherit', shell: true }); const c = spawn('npm', ['--prefix', 'client', 'run', 'dev'], { stdio: 'inherit', shell: true }); process.on('SIGINT', () => { s.kill(); c.kill(); process.exit(); });\"",
+    "seed": "npm --prefix server run seed",
+    "test:server": "npm --prefix server test",
+    "test:integration": "npm --prefix server run test:integration",
+    "test:client": "npm --prefix client test",
+    "test": "npm run test:server && npm run test:client",
+    "build": "npm --prefix client run build"
+  }
+}
