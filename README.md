@@ -1,12 +1,16 @@
-# Stack Advisor
+# AWS Stack Advisor
 
-A MERN-stack app that recommends an AWS architecture from a five-question
-quiz, renders it as a real branching diagram, and lets you compare any two
-of 25 catalogued AWS services head-to-head.
+A full-stack cloud architecture advisor that recommends optimal AWS system architectures based on requirements, renders interactive topological branching diagrams, evaluates stacks against the AWS Well-Architected Framework, generates hardened Terraform templates, and features grounded AI conversational intake.
 
 [![CI](https://github.com/DeeptiBaghel-hub/AWS-Stack-advisor/actions/workflows/ci.yml/badge.svg)](https://github.com/DeeptiBaghel-hub/AWS-Stack-advisor/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+[![Node](https://img.shields.io/badge/Node-%3E%3D18.0.0-green.svg)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-18.3-61dafb.svg)](https://react.dev/)
+[![React Router](https://img.shields.io/badge/React_Router-v7.18-f44250.svg)](https://reactrouter.com/)
+[![MongoDB](https://img.shields.io/badge/Database-MongoDB_Atlas-47a248.svg)](https://www.mongodb.com/)
+[![Playwright](https://img.shields.io/badge/E2E-Playwright_72_tests-45ba4b.svg)](https://playwright.dev/)
 
-**[Live demo →](#)** &nbsp;·&nbsp; _add your deployed URL here — see [DEPLOYMENT.md](./DEPLOYMENT.md)_
+> 🚀 **Live Deployment Guide:** See [DEPLOYMENT.md](./DEPLOYMENT.md) for full step-by-step instructions to deploy this stack on Vercel, Render, and MongoDB Atlas.
 
 ![Landing page](./docs/screenshots/01-landing.png)
 
@@ -28,6 +32,49 @@ up front rather than hidden.
 | Five-question wizard with a circuit-trace progress indicator | Real branching diagram — a compute node fanning out to a database and optional cache/storage, not a straight line |
 | ![Service catalog](./docs/screenshots/04-services.png) | ![Compare page](./docs/screenshots/05-compare.png) |
 | 25 services, searchable and filterable by category | Any two services, diffed side by side, with curated verdicts for the classic matchups |
+
+## System Architecture
+
+```mermaid
+graph TD
+    subgraph Client ["Frontend (React 18 SPA + Vite)"]
+        UI["Interactive Wizard / Service Catalog / Comparison Engine"]
+        GraphEngine["Dynamic DAG Diagram Renderer & SVG Connectors"]
+        IaCGen["Hardened Terraform Scaffolding Generator"]
+        PDFGen["On-Demand Client-Side PDF / JSON Exporter"]
+    end
+
+    subgraph API ["Backend API (Express + Node.js)"]
+        Guard["Helmet + CORS + Scoped Rate Limiter"]
+        Auth["JWT Authentication & Bcrypt Password Hashing"]
+        Engine["Deterministic Recommendation & WAF Scorer Engine"]
+        Telemetry["Structured Pino Logging & X-Request-Id Correlation"]
+    end
+
+    subgraph Storage ["Data Layer (MongoDB Atlas)"]
+        DBUser[("User Accounts & Profile Credentials")]
+        DBRecs[("Saved Architectures & Share IDs")]
+        DBCatalog[("25-Service Catalog & Curated Matchups")]
+    end
+
+    subgraph AI ["AI Layer (Google Gemini)"]
+        NLPIntake["Natural Language Parameter Extraction"]
+        ChatBot["Catalog-Grounded Conversational Assistant"]
+    end
+
+    UI -->|"REST / JWT"| Guard
+    Guard --> Auth
+    Guard --> Engine
+    Guard --> Telemetry
+    Engine --> Storage
+    Auth --> DBUser
+    Engine --> DBCatalog
+    Engine --> DBRecs
+    API -->|"Prompt & Grounded Context"| AI
+    UI --> GraphEngine
+    UI --> IaCGen
+    UI --> PDFGen
+```
 
 ## Stack
 

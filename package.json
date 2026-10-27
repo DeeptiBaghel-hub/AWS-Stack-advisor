@@ -12,6 +12,8 @@
     "test:integration": "npm --prefix server run test:integration",
     "test:client": "npm --prefix client test",
     "test": "npm run test:server && npm run test:client",
+    "test:all": "npm run test:server && npm run test:integration && npm run test:client",
+    "test:e2e": "npm --prefix e2e test",
     "build": "npm --prefix client run build"
   }
 }
