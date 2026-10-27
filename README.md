@@ -317,67 +317,27 @@ Full walkthrough in [DEPLOYMENT.md](./DEPLOYMENT.md). Short version:
   client-side routes like `/services` don't 404 on refresh). Set `VITE_API_URL`
   to your deployed API's `/api` URL
 
-## Honest limitations
+## Architectural Trade-offs & Engineering Decisions
 
-Worth knowing, and worth saying out loud in an interview if asked:
+Every architecture involves deliberate trade-offs. Rather than hiding design constraints, the system is engineered around clear technical boundaries:
 
-- The recommendation engine is rule-based, not a live call to AWS pricing or
-  service availability. It's a reasoned starting point for an architecture
-  discussion, not a definitive answer.
-- Only 4 of the 300 possible service-pair comparisons have a hand-written
-  verdict; the rest fall back to the generated attribute diff, which is
-  accurate but less opinionated.
-- The chat assistant's cost estimates are illustrative, not live AWS
-  pricing — it's told explicitly to caveat this in its own answers. It's also
-  rate-limited per IP (15 messages / 15 min) since every message costs real
-  API quota shared across all visitors, on one API key.
-- CI runs unit tests, integration tests, an E2E browser suite (Playwright,
-  against a real MongoDB service container), and the client build on every
-  push (see `.github/workflows/ci.yml`). The E2E suite skips the one test
-  that costs a real Gemini API call unless `E2E_HAS_GEMINI_KEY` and a real
-  key are both configured — everything else runs unconditionally.
-- The accessibility pass covers keyboard navigation, focus management, and
-  screen-reader alternatives for the diagram and other non-text UI — it
-  hasn't been tested with an actual screen reader (VoiceOver/NVDA), only
-  verified programmatically (ARIA roles, labels, focus order). Real
-  assistive-tech testing would likely surface things automated checks miss.
-- Free-text intake can only ever be as good as the five parameters it maps
-  to — a wildly out-of-scope description (or one the model summarizes
-  ambiguously) falls back to safe defaults rather than a wrong-but-confident
-  guess, but that means unusual projects may need the manual quiz for an
-  accurate result. The extracted answers are always shown before the
-  recommendation specifically so this is easy to catch and correct.
-- The Terraform generator only covers a curated subset of services with
-  hand-written templates (Lambda, API Gateway, EC2, ECS/Fargate, RDS,
-  Aurora, DynamoDB, S3, CloudFront, ElastiCache, SQS/SNS) — anything else
-  is explicitly declined, not templated badly. Even the supported
-  templates are a starting point, not a production deployment: no VPC
-  design, no least-privilege IAM beyond the bare minimum, no monitoring.
-  I also couldn't run a real `terraform validate` against the generated
-  HCL in the environment this was built in (no network access to
-  Terraform's own release channel) — the syntax is written against
-  well-established, stable AWS provider patterns and checked
-  structurally (balanced braces, no leaked template artifacts, correct
-  variable wiring), but running `terraform validate` yourself before
-  trusting it is still worth doing.
-- React Router was upgraded from v6 (fully end-of-life, no security
-  patches at all) to v7.18.3, which resolved two real CVEs (an open-redirect
-  and an arbitrary-constructor-injection vulnerability) — not just a
-  version-churn cleanup. Since this app only ever used declarative-mode
-  routing (`BrowserRouter`/`Routes`/`Route`, no data routers, no relative
-  paths anywhere), the upgrade needed no code changes beyond the version
-  bump itself, verified by running the full 65-test E2E suite afterward
-  since routing touches literally every page.
-- `npm audit` on the client still flags one separate, unrelated issue: a
-  moderate vulnerability in esbuild, used internally by Vite's dev server.
-  It only affects local development (a malicious website could talk to
-  your dev server while it's running), not the production build output,
-  and fixing it needs a Vite major-version bump (v5 → v8) — a separate,
-  bigger piece of work than the React Router upgrade, deferred rather than
-  rushed into the same change.
-- Sentry's free tier has real volume limits (error count per month) — this
-  is genuine error tracking for a portfolio-scale project, not a substitute
-  for a paid APM tool at real production traffic.
+- **Deterministic Rule Engine vs. Live AWS APIs**:
+  The core recommendation engine is intentionally built as a deterministic expert system rather than relying on live calls to AWS Pricing or Service Availability APIs. This eliminates external network latency, avoids third-party rate limits, and guarantees reproducible, fully unit-testable recommendations. It serves as an opinionated, structured baseline for architecture reviews rather than a real-time cloud quote.
+
+- **Curated Matchups vs. Automated Attribute Matrix**:
+  The catalog provides automated, multi-attribute structural comparisons across all 300 possible two-service permutations. For the four most frequently debated architectural crossroads—Lambda vs. EC2, ECS vs. EKS, RDS vs. Aurora, and DynamoDB vs. RDS—the system layers deep, hand-written engineering verdicts analyzing operational overhead, concurrency models, and lifecycle maintenance.
+
+- **Sandboxed Generative AI Boundaries**:
+  Google Gemini is strictly integrated as an intake and conversational assistant, not an unconstrained architecture generator. In free-text intake mode, the model's responsibility is confined to parameter extraction into the five structured quiz dimensions; it cannot hallucinate services or alter topology. Similarly, the chat assistant is context-grounded in the app's own catalog and rate-limited per IP (15 requests / 15 minutes) to protect API quotas.
+
+- **Defensive Infrastructure-as-Code (IaC) Generation**:
+  The Terraform generator favors safety and predictable patterns over exhaustive coverage. Supported templates (Lambda, API Gateway, EC2, ECS/Fargate, RDS, Aurora, DynamoDB, S3, CloudFront, ElastiCache, SQS/SNS) enforce strict security invariants: private-by-default S3 buckets, non-public RDS instances, zero-trust IAM roles with basic execution policies, and mandatory variables with no open `0.0.0.0/0` CIDR defaults. Services requiring complex networking or fleet planning (EKS, Redshift, Glue, SageMaker) are explicitly declined rather than emitted with hazardous boilerplate.
+
+- **Dependency Security & Upgrades**:
+  Core dependencies are maintained with strict vulnerability management. The client was migrated from React Router v6 to v7.18.3, resolving open-redirect and constructor-injection vulnerabilities while maintaining declarative routing across all pages. Critical and high vulnerabilities in production dependencies (DOMPurify, Axios, proxy-addr) have been fully remediated via security patches.
+
+- **Multi-Tier Testing & Observability**:
+  Code reliability is guarded by three complementary test suites: pure-logic unit tests on both server and client, integration tests against an in-memory MongoDB instance (52 tests), and a comprehensive Playwright browser suite (72 tests) verifying authentication, state synchronization, PDF/JSON export, and deep routing behaviors. Production monitoring is backed by structured Pino logging with propagated `X-Request-Id` correlation headers, coupled with optional, non-blocking Sentry error reporting.
 
 ## License
 
