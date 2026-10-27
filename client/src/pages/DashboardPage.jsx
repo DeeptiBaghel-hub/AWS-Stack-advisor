@@ -83,7 +83,7 @@ export default function DashboardPage() {
   return (
     <div className="wrap">
       <div className="eyebrow">your dashboard</div>
-      <h1>Welcome back, {user?.name?.split(' ')[0]}.</h1>
+      <h1>Welcome back{user?.name ? `, ${user.name.split(' ')[0]}` : ''}.</h1>
       <p className="sub">Everything you've explored, in one place.</p>
 
       {error && <p className="form-error">{error}</p>}
