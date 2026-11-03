@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
+import { getAuthPrompt } from '../utils/authPrompt';
 
 export default function RegisterPage() {
   const [name, setName] = useState('');
@@ -13,6 +14,7 @@ export default function RegisterPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const accessPrompt = getAuthPrompt(location.state?.from);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -35,6 +37,13 @@ export default function RegisterPage() {
       <section className="auth-card">
         <div className="eyebrow">account</div>
         <h1>Create an account</h1>
+        {accessPrompt && (
+          <div className="auth-context">
+            <div className="auth-context-eyebrow">{accessPrompt.eyebrow}</div>
+            <p className="auth-context-title">{accessPrompt.title}</p>
+            <p className="auth-context-description">{accessPrompt.description}</p>
+          </div>
+        )}
         <form className="form" onSubmit={handleSubmit}>
           {error && <p className="form-error">{error}</p>}
           <div className="field">
