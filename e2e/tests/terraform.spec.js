@@ -69,6 +69,6 @@ test.describe('Terraform generation', () => {
     await page.getByRole('link', { name: /generate a terraform starting point/i }).click();
     await expect(page).toHaveURL(/\/terraform$/);
     await expect(page.getByText(/Using the services from/i)).toBeVisible();
-    await expect(page.locator('.cost-source-note b')).toHaveText('A web API built for how your traffic behaves');
+    await expect(page.locator('.cost-source-note b')).toHaveText('A web API built for how your traffic behaves (Multi-AZ Resilient)');
   });
 });
