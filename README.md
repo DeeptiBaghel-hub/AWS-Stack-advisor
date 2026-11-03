@@ -181,6 +181,12 @@ graph TD
   transforms the live topological DAG to introduce Amazon Route 53 health routing,
   Amazon Aurora Global Database / DynamoDB Global Tables, and S3 Cross-Region
   Replication (CRR).
+- **Shareable Scenario Deep-Links & URL Presets** (`/quiz?preset=saas`) — pre-configure
+  and share exact architectural scenarios through URL query parameters
+  (e.g., `?preset=startup`, `?preset=saas`, `?preset=enterprise`, `?preset=analytics`,
+  or individual dimensions like `?workload=containers&ops=managed&db=relational`).
+  Includes instant auto-execution via `?auto=true` and a one-click "copy scenario link"
+  button to share specific scenarios in posts or technical docs.
 - **Shareable read-only links** for any saved recommendation — a public
   `/shared/:id` page, no login required to view, that never exposes the
   owning user's identity or raw quiz answers, only the recommendation itself

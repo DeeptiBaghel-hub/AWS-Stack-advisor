@@ -51,3 +51,4 @@ const fromR53 = multiRegion.diagram.edges.filter((e) => e.from === 'r53');
 assert.equal(fromR53.length, 2, 'Route 53 should connect to both regional compute nodes');
 
 console.log('haDisasterRecovery: 6 checks passed');
+

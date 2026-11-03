@@ -43,3 +43,4 @@ export default function HaTierSelector({ activeTier, onSelectTier }) {
     </div>
   );
 }
+

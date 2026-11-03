@@ -2621,3 +2621,72 @@ h2 {
   border-top: 1px solid var(--border);
   padding-top: 10px;
 }
+
+/* =========================================================================
+   Quiz Presets & Shareable Scenario Deep-Links
+   ========================================================================= */
+.quiz-presets-bar {
+  background: var(--panel);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin: 20px 0 24px;
+}
+.quiz-presets-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.quiz-presets-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+.copy-link-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.copy-link-btn:hover {
+  background: var(--panel-2);
+  border-color: var(--cyan);
+}
+.quiz-presets-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.preset-chip {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 12px;
+  color: var(--text);
+  font-size: 12.5px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.preset-chip:hover {
+  border-color: var(--cyan);
+  background: var(--panel-2);
+}
+.preset-chip.active {
+  background: var(--panel-2);
+  border-color: var(--cyan);
+  color: var(--cyan);
+  box-shadow: 0 0 0 1px var(--cyan);
+}
