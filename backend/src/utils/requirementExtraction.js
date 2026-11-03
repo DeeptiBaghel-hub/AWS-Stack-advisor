@@ -7,7 +7,7 @@
 
 const { generateContent } = require('./geminiClient');
 
-// Must match client/src/questions.js exactly — these are the only values
+// Must match frontend/src/questions.js exactly — these are the only values
 // computeRecommendation() knows how to reason about.
 const VALID = {
   workload: ['web-api', 'static', 'containers', 'analytics', 'ml', 'iot', 'batch'],

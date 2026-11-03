@@ -1,5 +1,5 @@
 {
-  "name": "aws-stack-advisor-server",
+  "name": "aws-stack-advisor-backend",
   "version": "1.0.0",
   "description": "API for AWS Stack Advisor - recommends AWS architectures based on project requirements",
   "main": "src/index.js",

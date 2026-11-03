@@ -1,5 +1,5 @@
 {
-  "name": "aws-stack-advisor-client",
+  "name": "aws-stack-advisor-frontend",
   "version": "1.0.0",
   "type": "module",
   "scripts": {

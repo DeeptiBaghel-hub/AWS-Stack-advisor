@@ -252,11 +252,11 @@ graph TD
   boundary, which closed a real, previously-existing gap: before this,
   an uncaught render error anywhere would white-screen the whole app with
   no fallback
-- Three test layers: unit tests for pure logic on both the server
-  (`server`: `npm test`) and client (`client`: `npm test` — the Terraform
+- Three test layers: unit tests for pure logic on both the backend
+  (`backend`: `npm test`) and frontend (`frontend`: `npm test` — the Terraform
   generator's security invariants specifically), integration tests
   exercising real HTTP requests against the actual Express app with an
-  in-memory MongoDB (`server`: `npm run test:integration`), and Playwright
+  in-memory MongoDB (`backend`: `npm run test:integration`), and Playwright
   E2E tests driving a real browser against the real client and API
   (`e2e/`) — 72 tests covering the full
   auth/quiz/history/share/describe/dashboard/compare/tweak/terraform
@@ -266,7 +266,7 @@ graph TD
 
 ```
 aws-stack-advisor/
-├── server/                     Express API
+├── backend/                    Express API
 │   ├── src/
 │   │   ├── config/db.js        Mongo connection
 │   │   ├── models/             User, Recommendation, Service (Mongoose schemas)
@@ -283,7 +283,7 @@ aws-stack-advisor/
 │   │   └── index.js            app entry point
 │   ├── .env.example
 │   └── package.json
-├── client/                     React (Vite) frontend
+├── frontend/                   React (Vite) frontend
 │   ├── src/
 │   │   ├── api/axios.js        API client, attaches JWT from localStorage
 │   │   ├── context/AuthContext.jsx
@@ -310,7 +310,7 @@ You'll need Node.js 18+ and a MongoDB connection string (a free
 **1. Start the API**
 
 ```bash
-cd server
+cd backend
 cp .env.example .env     # then fill in MONGO_URI and JWT_SECRET
 npm install
 npm run seed              # populates the 25-service catalog (safe to re-run)
@@ -326,7 +326,7 @@ it's set).
 **2. Start the frontend**
 
 ```bash
-cd client
+cd frontend
 cp .env.example .env     # defaults to http://localhost:5000/api, adjust if needed
 npm install
 npm run dev               # http://localhost:5173
@@ -338,7 +338,7 @@ an account; sign up to save quiz results to your history.
 **3. Run the backend tests**
 
 ```bash
-cd server
+cd backend
 npm test                # unit tests — pure logic, no DB needed
 npm run test:integration  # integration tests — real HTTP requests + in-memory MongoDB
 npm run test:all          # both
