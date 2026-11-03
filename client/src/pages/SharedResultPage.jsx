@@ -8,6 +8,7 @@ import FailureModesReview from '../components/FailureModesReview';
 import { exportRecommendationPdf } from '../utils/exportPdf';
 import { exportRecommendationJson } from '../utils/exportJson';
 import { exportDiagramPng } from '../utils/exportPng';
+import { exportDiagramSvg } from '../utils/exportSvg';
 import { copyMermaidToClipboard } from '../utils/exportMermaid';
 import api from '../api/axios';
 
@@ -139,6 +140,20 @@ export default function SharedResultPage() {
         </button>
         <button
           className="btn"
+          onClick={() => {
+            try {
+              exportDiagramSvg(recommendation.diagram, recommendation.title);
+              toast.success('Vector SVG downloaded.');
+            } catch (err) {
+              toast.error('Could not export SVG.');
+            }
+          }}
+          title="Download scalable vector SVG for Figma, Draw.io, or Illustrator"
+        >
+          export SVG
+        </button>
+        <button
+          className="btn"
           disabled={exportingPng}
           onClick={async () => {
             if (!diagramRef.current) return;
@@ -152,9 +167,9 @@ export default function SharedResultPage() {
               setExportingPng(false);
             }
           }}
-          title="Download high-resolution diagram image"
+          title="Download high-resolution PNG image"
         >
-          {exportingPng ? 'generating PNG…' : 'export diagram PNG'}
+          {exportingPng ? 'generating PNG…' : 'export PNG'}
         </button>
         <Link to="/quiz" className="btn btn-primary" style={{ textDecoration: 'none', textAlign: 'center' }}>
           take the quiz yourself &rarr;

@@ -9,6 +9,7 @@ import { useAuth } from '../context/AuthContext';
 import { exportRecommendationPdf } from '../utils/exportPdf';
 import { exportRecommendationJson } from '../utils/exportJson';
 import { exportDiagramPng } from '../utils/exportPng';
+import { exportDiagramSvg } from '../utils/exportSvg';
 import { copyMermaidToClipboard } from '../utils/exportMermaid';
 import { describeExtractedAnswers } from '../utils/answerLabels';
 import api from '../api/axios';
@@ -76,6 +77,15 @@ export default function ResultsPage() {
       setTimeout(() => setCopiedMermaid(false), 2500);
     } catch (err) {
       toast.error('Could not copy Mermaid syntax.');
+    }
+  }
+
+  function handleExportSvg() {
+    try {
+      exportDiagramSvg(recommendation.diagram, recommendation.title);
+      toast.success('Vector SVG downloaded.');
+    } catch (err) {
+      toast.error('Could not export SVG.');
     }
   }
 
@@ -150,8 +160,11 @@ export default function ResultsPage() {
         <button className="btn" onClick={handleCopyMermaid} title="Copy GitHub-compatible Mermaid flowchart syntax">
           {copiedMermaid ? '✓ copied Mermaid' : 'copy Mermaid'}
         </button>
-        <button className="btn" onClick={handleExportPng} disabled={exportingPng} title="Download high-resolution diagram image">
-          {exportingPng ? 'generating PNG…' : 'export diagram PNG'}
+        <button className="btn" onClick={handleExportSvg} title="Download scalable vector SVG for Figma, Draw.io, or Illustrator">
+          export SVG
+        </button>
+        <button className="btn" onClick={handleExportPng} disabled={exportingPng} title="Download high-resolution PNG image">
+          {exportingPng ? 'generating PNG…' : 'export PNG'}
         </button>
         {user ? (
           <button className="btn btn-primary" onClick={handleSave} disabled={saving || saved}>

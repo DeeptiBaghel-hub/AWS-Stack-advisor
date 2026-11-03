@@ -38,3 +38,4 @@ assert.deepEqual(analyzeFailureModes(null), []);
 assert.deepEqual(analyzeFailureModes({}), []);
 
 console.log('failureModes: 3 checks passed');
+

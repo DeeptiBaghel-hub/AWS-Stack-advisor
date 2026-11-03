@@ -138,8 +138,9 @@ graph TD
 - **Mermaid.js diagram export** — one-click copy of the generated architecture
   as GitHub-flavored `flowchart LR` Mermaid markdown, ready to paste straight
   into GitHub READMEs, Notion, Jira issues, or ADRs
-- **High-resolution diagram PNG export** — on-demand 2x retina image capture of the
-  topological diagram, styled to match the active dark or light theme
+- **Vector SVG & High-Resolution PNG export** — export the topological diagram
+  directly as a pure standalone scalable vector SVG (for Figma, Draw.io, or
+  Illustrator) or as a 2x retina PNG screenshot matching your active theme
 - **Dark/light mode**, persisted across sessions and respecting OS
   preference on first visit. Every color pair in the light theme was
   checked against WCAG AA contrast with an actual script, not eyeballed —
