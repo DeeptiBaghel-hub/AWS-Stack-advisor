@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures');
 const { registerNewUser } = require('./helpers');
 
 async function completeQuiz(page, choices) {
@@ -13,9 +13,13 @@ async function completeQuiz(page, choices) {
 }
 
 test.describe('Dashboard', () => {
-  test('is protected — visiting it while signed out redirects to login', async ({ page }) => {
-    await page.goto('/dashboard');
-    await expect(page).toHaveURL(/\/login$/);
+  test.describe('signed-out access', () => {
+    test.use({ signedIn: false });
+
+    test('is protected — visiting it while signed out redirects to login', async ({ page }) => {
+      await page.goto('/dashboard');
+      await expect(page).toHaveURL(/\/login$/);
+    });
   });
 
   test('shows a friendly empty state with zero saved stacks', async ({ page }) => {

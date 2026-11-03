@@ -1,7 +1,7 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures');
 
 test.describe('How It Works page', () => {
-  test('is reachable from the landing page footer without needing an account', async ({ page }) => {
+  test('is reachable from the landing page footer when signed in', async ({ page }) => {
     await page.goto('/');
     await page.getByRole('link', { name: /curious how this app itself is built/i }).click();
     await expect(page).toHaveURL(/\/how-it-works$/);
@@ -27,9 +27,13 @@ test.describe('How It Works page', () => {
     await expect(page.getByText(/Well-Architected scoring against a real framework/i)).toBeVisible();
   });
 
-  test('works for a signed-out visitor — no auth wall on an about-style page', async ({ page }) => {
-    await page.goto('/how-it-works');
-    await expect(page).toHaveURL(/\/how-it-works$/);
-    await expect(page.getByRole('link', { name: /^sign in$/i })).toBeVisible();
+  test.describe('signed-out access', () => {
+    test.use({ signedIn: false });
+
+    test('requires sign-in before opening the about page', async ({ page }) => {
+      await page.goto('/how-it-works');
+      await expect(page).toHaveURL(/\/login$/);
+      await expect(page.getByRole('heading', { name: /sign in/i })).toBeVisible();
+    });
   });
 });

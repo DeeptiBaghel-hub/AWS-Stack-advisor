@@ -85,6 +85,10 @@ graph TD
 
 ## Features
 
+- **Account required for the interactive workspace** — the landing page stays
+  public, while the quiz, service catalog, comparisons, assistant, exports,
+  Terraform scaffolds, and saved data require a StackSage account. Sign-in and
+  registration return visitors to the feature they originally opened.
 - A landing page structured around three equal-weight entry points (quiz,
   catalog, compare) rather than funneling everyone through the quiz —
   personalized for signed-in users with a saved-stack count and a link
@@ -187,9 +191,9 @@ graph TD
   or individual dimensions like `?workload=containers&ops=managed&db=relational`).
   Includes instant auto-execution via `?auto=true` and a one-click "copy scenario link"
   button to share specific scenarios in posts or technical docs.
-- **Shareable read-only links** for any saved recommendation — a public
-  `/shared/:id` page, no login required to view, that never exposes the
-  owning user's identity or raw quiz answers, only the recommendation itself
+- **Shareable read-only links** for any saved recommendation — a `/shared/:id`
+  page available to signed-in users that never exposes the owning user's
+  identity or raw quiz answers, only the recommendation itself
 - **Compare two saved recommendations head-to-head** (`/history/compare`)
   — select any two from your history and get a real quantitative
   comparison: which one wins each of the 6 Well-Architected pillars, an
@@ -379,18 +383,18 @@ E2E_MONGO_URI="<your MongoDB connection string>" npm test
 | POST   | `/api/auth/login`          | —    | Sign in, returns a JWT                |
 | GET    | `/api/auth/me`             | ✔    | Current user                          |
 | PUT    | `/api/auth/profile`        | ✔    | Update name and/or password           |
-| POST   | `/api/recommend`           | —    | `{ answers }` → recommended stack     |
-| POST   | `/api/recommend/from-description` | — | `{ description }` → AI-extracted answers + recommended stack |
+| POST   | `/api/recommend`           | ✔    | `{ answers }` → recommended stack     |
+| POST   | `/api/recommend/from-description` | ✔ | `{ description }` → AI-extracted answers + recommended stack |
 | POST   | `/api/recommend/history`   | ✔    | Save a recommendation                 |
 | GET    | `/api/recommend/history`   | ✔    | List your saved recommendations       |
 | DELETE | `/api/recommend/history/:id` | ✔ | Delete a saved recommendation         |
-| GET    | `/api/recommend/shared/:shareId` | — | Public, read-only view of a saved recommendation |
-| GET    | `/api/services`            | —    | List catalog services (`?category=`, `?q=`) |
-| GET    | `/api/services/categories` | —    | List distinct categories              |
-| GET    | `/api/services/:slug`      | —    | Single service detail                 |
-| GET    | `/api/services/compare?a=&b=` | — | Compare two services by slug          |
-| GET    | `/api/services/compare/featured` | — | The curated comparison pairs       |
-| POST   | `/api/assistant/chat`      | —    | `{ messages, recommendationContext? }` → assistant reply |
+| GET    | `/api/recommend/shared/:shareId` | ✔ | Read-only view of a saved recommendation |
+| GET    | `/api/services`            | ✔    | List catalog services (`?category=`, `?q=`) |
+| GET    | `/api/services/categories` | ✔    | List distinct categories              |
+| GET    | `/api/services/:slug`      | ✔    | Single service detail                 |
+| GET    | `/api/services/compare?a=&b=` | ✔ | Compare two services by slug          |
+| GET    | `/api/services/compare/featured` | ✔ | The curated comparison pairs       |
+| POST   | `/api/assistant/chat`      | ✔    | `{ messages, recommendationContext? }` → assistant reply |
 
 ## Deploying
 

@@ -1,7 +1,7 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures');
 
 test.describe('Terraform generation', () => {
-  test('the danger banner and unsupported-service list are visible without needing an account', async ({ page }) => {
+  test('the danger banner and unsupported-service list are visible when signed in', async ({ page }) => {
     await page.goto('/terraform');
     await expect(page.locator('.tf-danger-banner')).toBeVisible();
     await expect(page.locator('.tf-danger-title')).toHaveText(/read this before you run anything/i);

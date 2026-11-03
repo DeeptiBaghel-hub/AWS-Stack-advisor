@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures');
 const { registerNewUser } = require('./helpers');
 
 async function completeQuiz(page) {
@@ -50,7 +50,7 @@ test.describe('History and sharing', () => {
     await expect(otherPage.getByText(/nothing saved yet/i)).toBeVisible();
   });
 
-  test('a shared link opens publicly, with no auth, in a completely separate browser context', async ({ page, browser }) => {
+  test('a shared link requires a StackSage account in a separate browser context', async ({ page, browser }) => {
     await registerNewUser(page, { prefix: 'share' });
     await completeQuiz(page);
     await page.getByRole('button', { name: /save to my history/i }).click();
@@ -67,10 +67,8 @@ test.describe('History and sharing', () => {
     const sharedPage = await freshContext.newPage();
     await sharedPage.goto(`/shared/${shareId}`);
 
-    await expect(sharedPage.locator('.shared-banner')).toBeVisible();
-    await expect(sharedPage.getByRole('link', { name: /sign in/i })).toBeVisible();
-    await expect(sharedPage.locator('.d-node')).not.toHaveCount(0);
-    await expect(sharedPage.locator('.waf-pillar')).toHaveCount(6);
+    await expect(sharedPage).toHaveURL(/\/login$/);
+    await expect(sharedPage.getByRole('heading', { name: /sign in/i })).toBeVisible();
     await freshContext.close();
   });
 

@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures');
 const { registerNewUser, uniqueEmail } = require('./helpers');
 
 test.describe('Auth and profile', () => {
@@ -133,13 +133,17 @@ test.describe('Auth and profile', () => {
     await expect(page.locator('.nav-links').getByRole('link', { name: 'Stay Signed In' })).toBeVisible();
   });
 
-  test('the profile page is protected — visiting it while signed out redirects to login', async ({ page }) => {
-    await page.goto('/profile');
-    await expect(page).toHaveURL(/\/login$/);
-  });
+  test.describe('signed-out feature access', () => {
+    test.use({ signedIn: false });
 
-  test('the history page is protected — visiting it while signed out redirects to login', async ({ page }) => {
-    await page.goto('/history');
-    await expect(page).toHaveURL(/\/login$/);
+    test('the profile page redirects to login', async ({ page }) => {
+      await page.goto('/profile');
+      await expect(page).toHaveURL(/\/login$/);
+    });
+
+    test('the history page redirects to login', async ({ page }) => {
+      await page.goto('/history');
+      await expect(page).toHaveURL(/\/login$/);
+    });
   });
 });

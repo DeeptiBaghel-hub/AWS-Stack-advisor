@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures');
 
 async function answerQuiz(page, choices) {
   for (const [index, choice] of choices.entries()) {

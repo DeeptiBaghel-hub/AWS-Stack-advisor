@@ -87,7 +87,7 @@ export default function RegisterPage() {
             {submitting ? 'creating account…' : 'create account'}
           </button>
           <p className="form-hint">
-            Already have an account? <Link to="/login">Sign in</Link>
+            Already have an account? <Link to="/login" state={location.state}>Sign in</Link>
           </p>
         </form>
       </section>

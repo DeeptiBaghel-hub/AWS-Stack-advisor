@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures');
 
 test.describe('Theme toggle', () => {
   test('toggling switches the data-theme attribute and persists across a reload', async ({ page }) => {

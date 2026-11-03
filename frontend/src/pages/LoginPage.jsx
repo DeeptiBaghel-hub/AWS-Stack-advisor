@@ -74,7 +74,7 @@ export default function LoginPage() {
             {submitting ? 'signing in…' : 'sign in'}
           </button>
           <p className="form-hint">
-            No account yet? <Link to="/register">Create one</Link>
+            No account yet? <Link to="/register" state={location.state}>Create one</Link>
           </p>
         </form>
       </section>

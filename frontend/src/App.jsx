@@ -1,9 +1,9 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { useAuth } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
 import Navbar from './components/Navbar';
 import ChatWidget from './components/ChatWidget';
 import ProtectedRoute from './components/ProtectedRoute';
+import { useAuth } from './context/AuthContext';
 import LandingPage from './pages/LandingPage';
 import QuizPage from './pages/QuizPage';
 import ResultsPage from './pages/ResultsPage';
