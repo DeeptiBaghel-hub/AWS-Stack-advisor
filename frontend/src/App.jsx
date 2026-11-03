@@ -1,4 +1,5 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
 import Navbar from './components/Navbar';
 import ChatWidget from './components/ChatWidget';
@@ -22,6 +23,7 @@ import NotFoundPage from './pages/NotFoundPage';
 
 export default function App() {
   const location = useLocation();
+  const { user } = useAuth();
 
   return (
     <>
@@ -37,20 +39,20 @@ export default function App() {
             default. Without this, clicking "quiz" while tweaking did
             nothing visible: the tweak banner and stepper progress just
             stayed exactly as they were. */}
-        <Route path="/quiz" element={<QuizPage key={location.key} />} />
-        <Route path="/results" element={<ResultsPage />} />
-        <Route path="/services" element={<ServicesPage />} />
-        <Route path="/compare" element={<ComparePage />} />
+        <Route path="/quiz" element={<ProtectedRoute><QuizPage key={location.key} /></ProtectedRoute>} />
+        <Route path="/results" element={<ProtectedRoute><ResultsPage /></ProtectedRoute>} />
+        <Route path="/services" element={<ProtectedRoute><ServicesPage /></ProtectedRoute>} />
+        <Route path="/compare" element={<ProtectedRoute><ComparePage /></ProtectedRoute>} />
         {/* Same class of bug as /quiz above: presetKey's initial value is
             derived from location.state?.recommendation once at mount, so
             navigating here from a recommendation-backed visit to a plain
             nav-link visit (no state) left the preset picker showing no
             active pill even though it had silently fallen back to the
             serverless preset's data underneath. */}
-        <Route path="/cost-estimator" element={<CostEstimatorPage key={location.key} />} />
-        <Route path="/shared/:shareId" element={<SharedResultPage />} />
-        <Route path="/how-it-works" element={<HowItWorksPage />} />
-        <Route path="/terraform" element={<TerraformPage key={location.key} />} />
+        <Route path="/cost-estimator" element={<ProtectedRoute><CostEstimatorPage key={location.key} /></ProtectedRoute>} />
+        <Route path="/shared/:shareId" element={<ProtectedRoute><SharedResultPage /></ProtectedRoute>} />
+        <Route path="/how-it-works" element={<ProtectedRoute><HowItWorksPage /></ProtectedRoute>} />
+        <Route path="/terraform" element={<ProtectedRoute><TerraformPage key={location.key} /></ProtectedRoute>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route
@@ -87,7 +89,7 @@ export default function App() {
         />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-      <ChatWidget />
+      {user && <ChatWidget />}
       <Toaster
         position="bottom-left"
         toastOptions={{
