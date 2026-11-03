@@ -17,7 +17,14 @@ test.beforeEach(async ({ page, request, signedIn }) => {
   }
 
   const { token } = await response.json();
-  await page.addInitScript((value) => localStorage.setItem('token', value), token);
+  // Playwright runs init scripts on every document navigation. Install the
+  // fixture token only once per tab so later sign-out, registration, and
+  // login flows can replace or remove it normally.
+  await page.addInitScript((value) => {
+    if (sessionStorage.getItem('__e2e_auth_injected')) return;
+    localStorage.setItem('token', value);
+    sessionStorage.setItem('__e2e_auth_injected', '1');
+  }, token);
 });
 
 module.exports = { test, expect };
