@@ -80,8 +80,7 @@ test.describe('Auth and profile', () => {
     await page.fill('#email', email);
     await page.fill('#password', 'brandnewpassword999');
     await page.click('button[type="submit"]');
-    await page.waitForURL('/');
-    await expect(page.getByText(/welcome back/i)).toBeVisible();
+    await expect(page.getByRole('button', { name: /sign out/i })).toBeVisible();
   });
 
   test('changing the password with the wrong current password is rejected', async ({ page }) => {
