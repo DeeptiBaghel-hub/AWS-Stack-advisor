@@ -2367,3 +2367,160 @@ h2 {
   overflow-y: auto;
   white-space: pre;
 }
+
+/* =========================================================================
+   Production Pre-Mortem & Failure Modes Review
+   ========================================================================= */
+.failure-modes-review {
+  margin-top: 32px;
+  border-radius: var(--radius);
+  background: var(--panel);
+  border: 1px solid var(--border-strong);
+  padding: 24px;
+}
+.failure-modes-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.failure-modes-summary {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.badge-total {
+  background: var(--panel-2);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+.badge-high {
+  background: rgba(255, 107, 107, 0.15);
+  color: var(--red);
+  border: 1px solid var(--red);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.failure-modes-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.failure-modes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.failure-mode-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+.failure-mode-card:hover {
+  border-color: var(--border-strong);
+}
+.failure-mode-card.expanded {
+  border-color: var(--cyan);
+}
+.failure-mode-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  cursor: pointer;
+  user-select: none;
+  gap: 12px;
+}
+.failure-mode-title-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.failure-mode-service {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.failure-mode-name {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--text);
+}
+.failure-mode-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.severity-tag {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  padding: 3px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.severity-tag.high {
+  background: rgba(255, 107, 107, 0.15);
+  color: var(--red);
+  border: 1px solid var(--red);
+}
+.severity-tag.medium {
+  background: rgba(255, 176, 32, 0.15);
+  color: var(--amber);
+  border: 1px solid var(--amber);
+}
+.expand-indicator {
+  font-size: 10px;
+  color: var(--text-dim);
+}
+.failure-mode-body {
+  padding: 16px 18px;
+  border-top: 1px solid var(--border);
+  background: var(--panel);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.failure-detail-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 13px;
+}
+.failure-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.failure-val {
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+.mitigation-row {
+  background: var(--panel-2);
+  padding: 10px 12px;
+  border-radius: 6px;
+  border-left: 3px solid var(--cyan);
+  margin-top: 4px;
+}
+.mitigation-text {
+  color: var(--text);
+  font-weight: 500;
+}

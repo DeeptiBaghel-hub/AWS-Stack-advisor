@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import Diagram from '../components/Diagram';
 import WhyCard from '../components/WhyCard';
 import WellArchitectedReview from '../components/WellArchitectedReview';
+import FailureModesReview from '../components/FailureModesReview';
 import { exportRecommendationPdf } from '../utils/exportPdf';
 import { exportRecommendationJson } from '../utils/exportJson';
 import { exportDiagramPng } from '../utils/exportPng';
@@ -90,6 +91,8 @@ export default function SharedResultPage() {
       {recommendation.wellArchitected && (
         <WellArchitectedReview data={recommendation.wellArchitected} />
       )}
+
+      <FailureModesReview recommendation={recommendation} />
 
       <div className="btn-row" style={{ marginTop: 28 }}>
         <button

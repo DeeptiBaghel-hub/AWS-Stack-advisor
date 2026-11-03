@@ -167,6 +167,12 @@ graph TD
   an invented "readiness score." Spiky traffic on serverless compute scores
   differently than the same traffic on manually-scaled EC2, because the
   framework actually treats those differently.
+- **Architectural Pre-Mortem & Production Failure Modes Review** — maps each
+  recommended service to real-world production failure modes, triggers, and
+  concrete hardening mitigations (Lambda cold starts and concurrency starvation,
+  API Gateway 29s timeout limits, RDS connection pool exhaustion with RDS Proxy,
+  DynamoDB hot-partitioning, and ElastiCache stampedes). Highlights senior-level
+  operational engineering considerations before shipping.
 - **Shareable read-only links** for any saved recommendation — a public
   `/shared/:id` page, no login required to view, that never exposes the
   owning user's identity or raw quiz answers, only the recommendation itself

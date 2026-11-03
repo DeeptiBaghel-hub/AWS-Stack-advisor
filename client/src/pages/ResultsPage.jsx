@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import Diagram from '../components/Diagram';
 import WhyCard from '../components/WhyCard';
 import WellArchitectedReview from '../components/WellArchitectedReview';
+import FailureModesReview from '../components/FailureModesReview';
 import { useAuth } from '../context/AuthContext';
 import { exportRecommendationPdf } from '../utils/exportPdf';
 import { exportRecommendationJson } from '../utils/exportJson';
@@ -137,6 +138,8 @@ export default function ResultsPage() {
       {recommendation.wellArchitected && (
         <WellArchitectedReview data={recommendation.wellArchitected} />
       )}
+
+      <FailureModesReview recommendation={recommendation} />
 
       {error && <p className="form-error" style={{ marginTop: 20 }}>{error}</p>}
 
