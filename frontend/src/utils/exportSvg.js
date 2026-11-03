@@ -1,4 +1,4 @@
-// Pure vector SVG generator for AWS Stack Advisor architecture diagrams.
+// Pure vector SVG generator for StackSage architecture diagrams.
 // Generates a 100% standalone SVG (no external font or HTML dependencies)
 // that renders perfectly in browsers, Figma, Draw.io, Illustrator, and GitHub.
 
@@ -127,7 +127,7 @@ export function generateSvg(diagram, title = 'AWS Architecture') {
   parts.push(`  <rect width="100%" height="100%" class="bg" />`);
 
   // Title
-  parts.push(`  <text x="${padX}" y="32" class="header-sub">AWS STACK ADVISOR / ARCHITECTURE SCHEMATIC</text>`);
+  parts.push(`  <text x="${padX}" y="32" class="header-sub">STACKSAGE / AWS ARCHITECTURE</text>`);
   parts.push(`  <text x="${padX}" y="48" class="header-title">${escapeXml(title)}</text>`);
 
   // Connectors (Edges)

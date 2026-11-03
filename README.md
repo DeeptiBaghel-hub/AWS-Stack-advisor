@@ -1,4 +1,4 @@
-# AWS Stack Advisor
+# StackSage
 
 A full-stack cloud architecture advisor that recommends optimal AWS system architectures based on requirements, renders interactive topological branching diagrams, evaluates stacks against the AWS Well-Architected Framework, generates hardened Terraform templates, and features grounded AI conversational intake.
 

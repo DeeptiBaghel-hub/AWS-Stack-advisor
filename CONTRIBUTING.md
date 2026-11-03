@@ -1,4 +1,4 @@
-# Contributing to AWS Stack Advisor
+# Contributing to StackSage
 
 We welcome contributions! Please follow these guidelines to keep the project consistent and maintain high quality.
 

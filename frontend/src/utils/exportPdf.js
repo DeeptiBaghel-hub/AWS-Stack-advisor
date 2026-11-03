@@ -52,7 +52,7 @@ export async function exportRecommendationPdf(recommendation) {
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(120, 120, 120);
-  doc.text('STACK ADVISOR — RECOMMENDED ARCHITECTURE', marginX, y);
+  doc.text('STACKSAGE — RECOMMENDED AWS ARCHITECTURE', marginX, y);
   y += 28;
 
   doc.setTextColor(20, 20, 20);
