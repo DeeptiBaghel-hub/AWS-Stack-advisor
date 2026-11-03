@@ -266,6 +266,7 @@ graph TD
 
 ```
 aws-stack-advisor/
+├── package.json                Root-level scripts for development, tests, and builds
 ├── backend/                    Express API
 │   ├── src/
 │   │   ├── config/db.js        Mongo connection
@@ -300,6 +301,20 @@ aws-stack-advisor/
 ├── render.yaml                 Render Blueprint for the API
 └── DEPLOYMENT.md               Step-by-step guide to a live deployment
 ```
+
+From the repository root, you can start both apps together with `npm run dev`.
+The root package also provides shortcuts for running either app, seeding the
+catalog, running unit and integration tests, and building the frontend:
+
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Starts the backend and frontend together |
+| `npm run dev:backend` | Starts only the Express API |
+| `npm run dev:frontend` | Starts only the Vite frontend |
+| `npm run seed` | Seeds MongoDB with the service catalog |
+| `npm test` | Runs backend and frontend unit tests |
+| `npm run test:integration` | Runs API integration tests with in-memory MongoDB |
+| `npm run build` | Builds the frontend for deployment |
 
 ## Running it locally
 
