@@ -25,7 +25,7 @@ Vercel (frontend). Total time is usually 20-30 minutes the first time.
 2. Create a free account at [render.com](https://render.com) and connect your
    GitHub account.
 3. Click **New → Blueprint**, point it at your repo. Render will detect
-   `render.yaml` at the root and pre-fill most settings (root directory
+   `render.yaml` at the root and pre-fill most settings (Free web service, root directory
    `backend`, build command `npm install`, start command `npm start`, health
    check on `/api/health`).
 4. When prompted for environment variables, set:
