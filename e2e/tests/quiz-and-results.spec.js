@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 
 async function answerQuiz(page, choices) {
   for (const [index, choice] of choices.entries()) {
-    await page.getByRole('button', { name: new RegExp(choice, 'i') }).first().click();
+    await page.locator('.options').getByRole('button', { name: new RegExp(choice, 'i') }).first().click();
     if (index < choices.length - 1) {
       await expect(page.getByText(`question ${index + 2} of 5`)).toBeVisible();
     }
@@ -95,7 +95,7 @@ test.describe('Stepped quiz', () => {
     for await (const chunk of stream) chunks.push(chunk);
     const content = JSON.parse(Buffer.concat(chunks).toString('utf-8'));
 
-    expect(content.title).toBe('A web API built for how your traffic behaves');
+    expect(content.title).toBe('A web API built for how your traffic behaves (Multi-AZ Resilient)');
     expect(Array.isArray(content.why)).toBe(true);
     expect(content.diagram.nodes.length).toBeGreaterThan(0);
     expect(content.wellArchitected.pillars).toHaveLength(6);

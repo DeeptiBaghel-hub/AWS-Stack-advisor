@@ -8,7 +8,7 @@ import questions from '../questions.js';
 export const QUIZ_PRESETS = {
   startup: {
     id: 'startup',
-    label: '🚀 Startup MVP',
+    label: 'Startup MVP',
     desc: 'Low-cost, serverless prototype that scales to zero when idle.',
     answers: {
       workload: 'web-api',
@@ -20,7 +20,7 @@ export const QUIZ_PRESETS = {
   },
   saas: {
     id: 'saas',
-    label: '⚡ Spiky B2B SaaS',
+    label: 'Spiky B2B SaaS',
     desc: 'High-growth web API with spiky burst traffic and relational data.',
     answers: {
       workload: 'web-api',
@@ -32,7 +32,7 @@ export const QUIZ_PRESETS = {
   },
   enterprise: {
     id: 'enterprise',
-    label: '🏢 Enterprise Containers',
+    label: 'Enterprise Containers',
     desc: 'Mission-critical containerized microservices fleet with strict uptime.',
     answers: {
       workload: 'containers',
@@ -44,7 +44,7 @@ export const QUIZ_PRESETS = {
   },
   analytics: {
     id: 'analytics',
-    label: '📊 Serverless Data Lake',
+    label: 'Serverless Data Lake',
     desc: 'Ad-hoc SQL query pipeline on S3 without managing database servers.',
     answers: {
       workload: 'analytics',
@@ -56,7 +56,7 @@ export const QUIZ_PRESETS = {
   },
   ml: {
     id: 'ml',
-    label: '🤖 Machine Learning Pipeline',
+    label: 'Machine Learning Pipeline',
     desc: 'Model training and auto-scaled real-time inference endpoint.',
     answers: {
       workload: 'ml',
@@ -68,7 +68,7 @@ export const QUIZ_PRESETS = {
   },
   static: {
     id: 'static',
-    label: '🌐 Global Static Web',
+    label: 'Global Static Web',
     desc: 'Global edge-cached Jamstack site on CloudFront and S3.',
     answers: {
       workload: 'static',
