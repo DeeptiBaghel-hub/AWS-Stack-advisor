@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures');
 
 test.describe('Service catalog', () => {
   test('lists all 25 services on load', async ({ page }) => {

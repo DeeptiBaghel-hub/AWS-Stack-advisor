@@ -1,7 +1,8 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures');
 const { registerNewUser, uniqueEmail } = require('./helpers');
 
 test.describe('Auth and profile', () => {
+  test.use({ signedIn: false });
   test('registering logs you in and personalizes the landing page', async ({ page }) => {
     const { name } = await registerNewUser(page, { name: 'Deepti Sharma', prefix: 'landing' });
     await expect(page.getByText(new RegExp(`Welcome back, ${name.split(' ')[0]}`, 'i'))).toBeVisible();
@@ -79,8 +80,7 @@ test.describe('Auth and profile', () => {
     await page.fill('#email', email);
     await page.fill('#password', 'brandnewpassword999');
     await page.click('button[type="submit"]');
-    await page.waitForURL('/');
-    await expect(page.getByText(/welcome back/i)).toBeVisible();
+    await expect(page.getByRole('button', { name: /sign out/i })).toBeVisible();
   });
 
   test('changing the password with the wrong current password is rejected', async ({ page }) => {
@@ -133,13 +133,17 @@ test.describe('Auth and profile', () => {
     await expect(page.locator('.nav-links').getByRole('link', { name: 'Stay Signed In' })).toBeVisible();
   });
 
-  test('the profile page is protected — visiting it while signed out redirects to login', async ({ page }) => {
-    await page.goto('/profile');
-    await expect(page).toHaveURL(/\/login$/);
-  });
+  test.describe('signed-out feature access', () => {
+    test.use({ signedIn: false });
 
-  test('the history page is protected — visiting it while signed out redirects to login', async ({ page }) => {
-    await page.goto('/history');
-    await expect(page).toHaveURL(/\/login$/);
+    test('the profile page redirects to login', async ({ page }) => {
+      await page.goto('/profile');
+      await expect(page).toHaveURL(/\/login$/);
+    });
+
+    test('the history page redirects to login', async ({ page }) => {
+      await page.goto('/history');
+      await expect(page).toHaveURL(/\/login$/);
+    });
   });
 });

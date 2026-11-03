@@ -13,6 +13,7 @@ const assert = require('node:assert/strict');
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const request = require('supertest');
+const jwt = require('jsonwebtoken');
 
 process.env.NODE_ENV = 'test';
 process.env.JWT_SECRET = 'test-secret-do-not-use-in-production';
@@ -24,6 +25,13 @@ const Service = require('../src/models/Service');
 const services = require('../src/data/serviceCatalog');
 
 let mongod;
+
+const testToken = jwt.sign({ sub: new mongoose.Types.ObjectId().toString() }, process.env.JWT_SECRET);
+const api = {
+  get: (path) => request(app).get(path).set('Authorization', `Bearer ${testToken}`),
+  post: (path) => request(app).post(path).set('Authorization', `Bearer ${testToken}`),
+  delete: (path) => request(app).delete(path).set('Authorization', `Bearer ${testToken}`),
+};
 
 test.before(async () => {
   mongod = await MongoMemoryServer.create();
@@ -64,7 +72,7 @@ test('a thrown error\'s response requestId matches its response header', async (
   const savedKey = process.env.GEMINI_API_KEY;
   delete process.env.GEMINI_API_KEY;
 
-  const res = await request(app)
+  const res = await api
     .post('/api/assistant/chat')
     .send({ messages: [{ role: 'user', content: 'anything' }] });
 
@@ -93,7 +101,7 @@ test('a request-supplied X-Request-Id is echoed back rather than replaced', asyn
 });
 
 test('error responses include the same requestId for correlating a user report to a log line', async () => {
-  const res = await request(app)
+  const res = await api
     .post('/api/assistant/chat')
     .set('X-Request-Id', 'trace-for-this-specific-error')
     .send({ messages: [] }); // triggers a validation error
@@ -105,7 +113,7 @@ test('a 500-class error still returns requestId in the body, not just the header
   process.env.GEMINI_API_KEY = 'test-key';
   global.fetch = async () => ({ ok: false, status: 500, text: async () => 'boom' });
 
-  const res = await request(app)
+  const res = await api
     .post('/api/assistant/chat')
     .send({ messages: [{ role: 'user', content: 'anything' }] });
 
@@ -115,7 +123,7 @@ test('a 500-class error still returns requestId in the body, not just the header
 });
 
 test('POST /api/recommend returns a branching diagram for a spiky web API', async () => {
-  const res = await request(app)
+  const res = await api
     .post('/api/recommend')
     .send({ answers: { workload: 'web-api', ops: 'serverless', traffic: 'spiky', db: 'nosql', scale: 'startup' } });
   assert.equal(res.status, 200);
@@ -124,7 +132,7 @@ test('POST /api/recommend returns a branching diagram for a spiky web API', asyn
 });
 
 test('POST /api/recommend rejects a missing answers object', async () => {
-  const res = await request(app).post('/api/recommend').send({});
+  const res = await api.post('/api/recommend').send({});
   assert.equal(res.status, 400);
 });
 
@@ -168,6 +176,15 @@ test('auth: wrong password returns 401', async () => {
 test('auth: protected routes reject requests with no token', async () => {
   const res = await request(app).get('/api/auth/me');
   assert.equal(res.status, 401);
+
+  const catalog = await request(app).get('/api/services');
+  assert.equal(catalog.status, 401);
+  const assistant = await request(app).post('/api/assistant/chat').send({ messages: [{ role: 'user', content: 'Hi' }] });
+  assert.equal(assistant.status, 401);
+  const recommendation = await request(app).post('/api/recommend').send({ answers: {} });
+  assert.equal(recommendation.status, 401);
+  const sharedResult = await request(app).get('/api/recommend/shared/not-a-real-share-id');
+  assert.equal(sharedResult.status, 401);
 });
 
 test('profile: updates the display name', async () => {
@@ -241,31 +258,31 @@ test('profile: rejects updates from an unauthenticated request', async () => {
 });
 
 test('services: list returns all 25 catalog entries', async () => {
-  const res = await request(app).get('/api/services');
+  const res = await api.get('/api/services');
   assert.equal(res.status, 200);
   assert.equal(res.body.services.length, 25);
 });
 
 test('services: category filter narrows results correctly', async () => {
-  const res = await request(app).get('/api/services').query({ category: 'Containers' });
+  const res = await api.get('/api/services').query({ category: 'Containers' });
   assert.equal(res.status, 200);
   assert.equal(res.body.services.length, 3);
   assert.ok(res.body.services.every((s) => s.category === 'Containers'));
 });
 
 test('services: single service lookup by slug', async () => {
-  const res = await request(app).get('/api/services/aws-lambda');
+  const res = await api.get('/api/services/aws-lambda');
   assert.equal(res.status, 200);
   assert.equal(res.body.service.name, 'AWS Lambda');
 });
 
 test('services: unknown slug returns 404', async () => {
-  const res = await request(app).get('/api/services/not-a-real-service');
+  const res = await api.get('/api/services/not-a-real-service');
   assert.equal(res.status, 404);
 });
 
 test('services: compare returns a curated verdict for a featured pair', async () => {
-  const res = await request(app)
+  const res = await api
     .get('/api/services/compare')
     .query({ a: 'aws-lambda', b: 'amazon-ec2' });
   assert.equal(res.status, 200);
@@ -275,7 +292,7 @@ test('services: compare returns a curated verdict for a featured pair', async ()
 });
 
 test('services: compare returns null curated verdict for a non-featured pair', async () => {
-  const res = await request(app)
+  const res = await api
     .get('/api/services/compare')
     .query({ a: 'amazon-sqs', b: 'amazon-sns' });
   assert.equal(res.status, 200);
@@ -283,7 +300,7 @@ test('services: compare returns null curated verdict for a non-featured pair', a
 });
 
 test('services: compare with a missing slug returns 400', async () => {
-  const res = await request(app).get('/api/services/compare').query({ a: 'aws-lambda' });
+  const res = await api.get('/api/services/compare').query({ a: 'aws-lambda' });
   assert.equal(res.status, 400);
 });
 
@@ -299,7 +316,7 @@ test('history: saving a recommendation generates a shareId and persists the WAF 
   const token = await registerAndGetToken('hist-save');
   const rec = computeRecommendation({ workload: 'web-api', ops: 'serverless', traffic: 'spiky', db: 'nosql', scale: 'startup' });
 
-  const res = await request(app)
+  const res = await api
     .post('/api/recommend/history')
     .set('Authorization', `Bearer ${token}`)
     .send({ answers: { workload: 'web-api' }, ...rec });
@@ -314,21 +331,21 @@ test('history: list only returns the requesting user\'s own saved recommendation
   const tokenB = await registerAndGetToken('hist-b');
   const rec = computeRecommendation({ workload: 'static', scale: 'growing' });
 
-  await request(app).post('/api/recommend/history').set('Authorization', `Bearer ${tokenA}`).send({ answers: {}, ...rec });
+  await api.post('/api/recommend/history').set('Authorization', `Bearer ${tokenA}`).send({ answers: {}, ...rec });
 
-  const listA = await request(app).get('/api/recommend/history').set('Authorization', `Bearer ${tokenA}`);
-  const listB = await request(app).get('/api/recommend/history').set('Authorization', `Bearer ${tokenB}`);
+  const listA = await api.get('/api/recommend/history').set('Authorization', `Bearer ${tokenA}`);
+  const listB = await api.get('/api/recommend/history').set('Authorization', `Bearer ${tokenB}`);
   assert.equal(listA.body.recommendations.length, 1);
   assert.equal(listB.body.recommendations.length, 0);
 });
 
-test('shared: a saved recommendation is fetchable via its public shareId with no auth', async () => {
+test('shared: a saved recommendation is fetchable via its shareId when signed in', async () => {
   const token = await registerAndGetToken('share-fetch');
   const rec = computeRecommendation({ workload: 'analytics', scale: 'enterprise' });
-  const saveRes = await request(app).post('/api/recommend/history').set('Authorization', `Bearer ${token}`).send({ answers: {}, ...rec });
+  const saveRes = await api.post('/api/recommend/history').set('Authorization', `Bearer ${token}`).send({ answers: {}, ...rec });
   const shareId = saveRes.body.recommendation.shareId;
 
-  const res = await request(app).get(`/api/recommend/shared/${shareId}`);
+  const res = await api.get(`/api/recommend/shared/${shareId}`);
   assert.equal(res.status, 200);
   assert.equal(res.body.recommendation.title, rec.title);
 });
@@ -336,32 +353,32 @@ test('shared: a saved recommendation is fetchable via its public shareId with no
 test('shared: never exposes the owning user, email, or raw quiz answers', async () => {
   const token = await registerAndGetToken('share-privacy');
   const rec = computeRecommendation({ workload: 'iot', db: 'relational' });
-  const saveRes = await request(app)
+  const saveRes = await api
     .post('/api/recommend/history')
     .set('Authorization', `Bearer ${token}`)
     .send({ answers: { workload: 'iot', db: 'relational' }, ...rec });
   const shareId = saveRes.body.recommendation.shareId;
 
-  const res = await request(app).get(`/api/recommend/shared/${shareId}`);
+  const res = await api.get(`/api/recommend/shared/${shareId}`);
   assert.equal(res.status, 200);
   assert.equal(res.body.recommendation.user, undefined);
   assert.equal(res.body.recommendation.answers, undefined);
 });
 
 test('shared: a nonexistent shareId returns 404', async () => {
-  const res = await request(app).get('/api/recommend/shared/not-a-real-share-id');
+  const res = await api.get('/api/recommend/shared/not-a-real-share-id');
   assert.equal(res.status, 404);
 });
 
 test('shared: the link stops working once the recommendation is deleted', async () => {
   const token = await registerAndGetToken('share-delete');
   const rec = computeRecommendation({ workload: 'ml' });
-  const saveRes = await request(app).post('/api/recommend/history').set('Authorization', `Bearer ${token}`).send({ answers: {}, ...rec });
+  const saveRes = await api.post('/api/recommend/history').set('Authorization', `Bearer ${token}`).send({ answers: {}, ...rec });
   const { shareId, _id } = saveRes.body.recommendation;
 
   await request(app).delete(`/api/recommend/history/${_id}`).set('Authorization', `Bearer ${token}`);
 
-  const res = await request(app).get(`/api/recommend/shared/${shareId}`);
+  const res = await api.get(`/api/recommend/shared/${shareId}`);
   assert.equal(res.status, 404);
 });
 
@@ -389,7 +406,7 @@ test('assistant: rejects requests with no GEMINI_API_KEY configured', async () =
   const savedKey = process.env.GEMINI_API_KEY;
   delete process.env.GEMINI_API_KEY;
 
-  const res = await request(app)
+  const res = await api
     .post('/api/assistant/chat')
     .send({ messages: [{ role: 'user', content: 'Why Lambda over EC2?' }] });
 
@@ -411,7 +428,7 @@ test('assistant: returns the parsed reply on a successful Gemini response', asyn
     };
   };
 
-  const res = await request(app)
+  const res = await api
     .post('/api/assistant/chat')
     .send({ messages: [{ role: 'user', content: 'Why Lambda over EC2?' }] });
 
@@ -429,7 +446,7 @@ test('assistant: translates assistant role to Gemini\'s "model" role', async () 
     return { ok: true, json: async () => ({ candidates: [{ content: { parts: [{ text: 'ok' }] }, finishReason: 'STOP' }] }) };
   };
 
-  const res = await request(app).post('/api/assistant/chat').send({
+  const res = await api.post('/api/assistant/chat').send({
     messages: [
       { role: 'user', content: 'Hi' },
       { role: 'assistant', content: 'Hello, how can I help?' },
@@ -446,7 +463,7 @@ test('assistant: handles a safety-blocked response gracefully instead of errorin
     json: async () => ({ candidates: [{ finishReason: 'SAFETY' }] }),
   });
 
-  const res = await request(app)
+  const res = await api
     .post('/api/assistant/chat')
     .send({ messages: [{ role: 'user', content: 'anything' }] });
 
@@ -459,7 +476,7 @@ test('assistant: propagates a clean 502 when Gemini itself errors', async () => 
   process.env.GEMINI_API_KEY = 'test-key';
   global.fetch = async () => ({ ok: false, status: 500, text: async () => 'internal error' });
 
-  const res = await request(app)
+  const res = await api
     .post('/api/assistant/chat')
     .send({ messages: [{ role: 'user', content: 'anything' }] });
 
@@ -468,12 +485,12 @@ test('assistant: propagates a clean 502 when Gemini itself errors', async () => 
 });
 
 test('assistant: rejects an empty messages array', async () => {
-  const res = await request(app).post('/api/assistant/chat').send({ messages: [] });
+  const res = await api.post('/api/assistant/chat').send({ messages: [] });
   assert.equal(res.status, 400);
 });
 
 test('assistant: rejects a message over the length limit', async () => {
-  const res = await request(app)
+  const res = await api
     .post('/api/assistant/chat')
     .send({ messages: [{ role: 'user', content: 'x'.repeat(2001) }] });
   assert.equal(res.status, 400);
@@ -500,7 +517,7 @@ test('describe: extracts valid parameters and produces a real recommendation', a
     };
   };
 
-  const res = await request(app)
+  const res = await api
     .post('/api/recommend/from-description')
     .send({ description: 'I want to build a food delivery app with 50k users, image uploads, and low cost.' });
 
@@ -524,7 +541,7 @@ test('describe: strips markdown code fences before parsing, since Gemini sometim
     }),
   });
 
-  const res = await request(app)
+  const res = await api
     .post('/api/recommend/from-description')
     .send({ description: 'A data pipeline that processes daily sales exports into dashboards.' });
 
@@ -545,7 +562,7 @@ test('describe: falls back to safe defaults for any field outside the allowed en
     }),
   });
 
-  const res = await request(app)
+  const res = await api
     .post('/api/recommend/from-description')
     .send({ description: 'Something the model might describe unpredictably.' });
 
@@ -563,7 +580,7 @@ test('describe: returns a clean error when the model response isn\'t valid JSON'
     }),
   });
 
-  const res = await request(app)
+  const res = await api
     .post('/api/recommend/from-description')
     .send({ description: 'Something that makes the model chatty instead of returning JSON.' });
 
@@ -578,7 +595,7 @@ test('describe: returns a clean error on a safety-blocked response instead of cr
     json: async () => ({ candidates: [{ finishReason: 'SAFETY' }] }),
   });
 
-  const res = await request(app)
+  const res = await api
     .post('/api/recommend/from-description')
     .send({ description: 'Any description, blocked for this test regardless of content.' });
 
@@ -587,12 +604,12 @@ test('describe: returns a clean error on a safety-blocked response instead of cr
 });
 
 test('describe: rejects a description that is too short', async () => {
-  const res = await request(app).post('/api/recommend/from-description').send({ description: 'too short' });
+  const res = await api.post('/api/recommend/from-description').send({ description: 'too short' });
   assert.equal(res.status, 400);
 });
 
 test('describe: rejects a description over the length limit', async () => {
-  const res = await request(app)
+  const res = await api
     .post('/api/recommend/from-description')
     .send({ description: 'x'.repeat(1001) });
   assert.equal(res.status, 400);
@@ -602,11 +619,10 @@ test('describe: rejects requests with no GEMINI_API_KEY configured', async () =>
   const savedKey = process.env.GEMINI_API_KEY;
   delete process.env.GEMINI_API_KEY;
 
-  const res = await request(app)
+  const res = await api
     .post('/api/recommend/from-description')
     .send({ description: 'A perfectly reasonable description of a real project idea here.' });
 
   assert.equal(res.status, 503);
   process.env.GEMINI_API_KEY = savedKey;
 });
-

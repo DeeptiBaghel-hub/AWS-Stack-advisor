@@ -1,5 +1,6 @@
 const express = require('express');
 const asyncHandler = require('../middleware/asyncHandler');
+const requireAuth = require('../middleware/auth');
 const {
   listServices,
   getCategories,
@@ -9,6 +10,7 @@ const {
 } = require('../controllers/serviceController');
 
 const router = express.Router();
+router.use(requireAuth);
 
 // Order matters: specific paths before the /:slug catch-all.
 router.get('/categories', asyncHandler(getCategories));

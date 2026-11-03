@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures');
 
 test.describe('Free-text description intake', () => {
   test('the mode toggle switches between the stepped quiz and the describe form', async ({ page }) => {

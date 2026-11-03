@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 
@@ -12,6 +12,7 @@ export default function RegisterPage() {
   const [submitting, setSubmitting] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -20,7 +21,8 @@ export default function RegisterPage() {
     try {
       await register(name, email, password);
       toast.success('Account created.');
-      navigate('/');
+      const from = location.state?.from;
+      navigate(from ? `${from.pathname || '/'}${from.search || ''}${from.hash || ''}` : '/', { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || 'Could not create your account.');
     } finally {
@@ -85,7 +87,7 @@ export default function RegisterPage() {
             {submitting ? 'creating account…' : 'create account'}
           </button>
           <p className="form-hint">
-            Already have an account? <Link to="/login">Sign in</Link>
+            Already have an account? <Link to="/login" state={location.state}>Sign in</Link>
           </p>
         </form>
       </section>

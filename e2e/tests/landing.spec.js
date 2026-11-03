@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('./fixtures');
 
 test.describe('Landing page', () => {
   test('shows the three main entry points, not just the quiz', async ({ page }) => {

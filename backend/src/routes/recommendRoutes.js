@@ -14,6 +14,7 @@ const {
 } = require('../controllers/recommendController');
 
 const router = express.Router();
+router.use(requireAuth);
 
 router.post('/', [body('answers').isObject().withMessage('answers must be an object.')], validate, recommend);
 
@@ -33,13 +34,11 @@ router.post(
   asyncHandler(fromDescription)
 );
 
-// Public, unauthenticated — must be registered before the protected
-// /history routes so it isn't shadowed, and deliberately named /shared/
-// rather than /history/:id so it's obviously a different, public surface.
+// Register shared results before /history so the route is not shadowed.
 router.get('/shared/:shareId', asyncHandler(getSharedRecommendation));
 
-router.post('/history', requireAuth, asyncHandler(saveRecommendation));
-router.get('/history', requireAuth, asyncHandler(listRecommendations));
-router.delete('/history/:id', requireAuth, asyncHandler(deleteRecommendation));
+router.post('/history', asyncHandler(saveRecommendation));
+router.get('/history', asyncHandler(listRecommendations));
+router.delete('/history/:id', asyncHandler(deleteRecommendation));
 
 module.exports = router;
