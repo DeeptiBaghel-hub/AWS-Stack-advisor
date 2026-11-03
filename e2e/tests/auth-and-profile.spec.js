@@ -2,6 +2,7 @@ const { test, expect } = require('./fixtures');
 const { registerNewUser, uniqueEmail } = require('./helpers');
 
 test.describe('Auth and profile', () => {
+  test.use({ signedIn: false });
   test('registering logs you in and personalizes the landing page', async ({ page }) => {
     const { name } = await registerNewUser(page, { name: 'Deepti Sharma', prefix: 'landing' });
     await expect(page.getByText(new RegExp(`Welcome back, ${name.split(' ')[0]}`, 'i'))).toBeVisible();
