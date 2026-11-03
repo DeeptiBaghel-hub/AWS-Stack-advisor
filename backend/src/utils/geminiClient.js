@@ -15,6 +15,48 @@ const logger = require('./logger');
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-flash-latest';
 const GEMINI_URL = (model) => `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
+const TRANSIENT_STATUSES = new Set([408, 429, 500, 502, 503, 504]);
+const MAX_ATTEMPTS = 3;
+const BASE_RETRY_DELAY_MS = 500;
+
+function retryDelay(attempt, retryAfterHeader) {
+  const retryAfterSeconds = Number(retryAfterHeader);
+  if (Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0) {
+    return Math.min(retryAfterSeconds * 1000, 5000);
+  }
+  return BASE_RETRY_DELAY_MS * (2 ** (attempt - 1)) + Math.floor(Math.random() * 251);
+}
+
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// Gemini can briefly return 429/5xx responses during quota or capacity spikes.
+// Retry only transient failures with bounded exponential backoff and jitter.
+async function fetchWithRetry(url, options) {
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    let response;
+    try {
+      response = await fetch(url, options);
+    } catch (err) {
+      if (attempt === MAX_ATTEMPTS) throw err;
+      const delayMs = retryDelay(attempt);
+      logger.warn({ attempt, delayMs }, 'Gemini request failed transiently; retrying');
+      await wait(delayMs);
+      continue;
+    }
+
+    if (response.ok || !TRANSIENT_STATUSES.has(response.status) || attempt === MAX_ATTEMPTS) {
+      return response;
+    }
+
+    const delayMs = retryDelay(attempt, response.headers?.get('retry-after'));
+    if (response.body) await response.body.cancel().catch(() => {});
+    logger.warn({ attempt, status: response.status, delayMs, model: GEMINI_MODEL }, 'Gemini returned a transient error; retrying');
+    await wait(delayMs);
+  }
+}
+
 // Returns the raw candidate object from Gemini's response (or throws a
 // request-scoped error with .status/.publicMessage already set, ready to
 // be forwarded to Express's error handler by the caller's asyncHandler,
@@ -27,7 +69,7 @@ async function generateContent({ systemPrompt, contents, generationConfig }) {
     throw err;
   }
 
-  const response = await fetch(`${GEMINI_URL(GEMINI_MODEL)}?key=${process.env.GEMINI_API_KEY}`, {
+  const response = await fetchWithRetry(`${GEMINI_URL(GEMINI_MODEL)}?key=${process.env.GEMINI_API_KEY}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
