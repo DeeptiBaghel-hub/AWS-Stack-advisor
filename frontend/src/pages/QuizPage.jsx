@@ -136,13 +136,13 @@ export default function QuizPage() {
       {mode === 'quiz' && !submitting && (
         <div className="quiz-presets-bar">
           <div className="quiz-presets-header">
-            <span className="quiz-presets-label">⚡ Architecture Scenarios &amp; Presets:</span>
+            <span className="quiz-presets-label">Architecture Scenarios &amp; Presets</span>
             <button
               className="copy-link-btn"
               onClick={handleCopyScenarioLink}
               title="Copy a shareable link that opens with these exact parameters"
             >
-              📋 copy scenario link
+              copy scenario link
             </button>
           </div>
           <div className="quiz-presets-chips">
