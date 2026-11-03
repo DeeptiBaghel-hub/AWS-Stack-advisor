@@ -4,7 +4,7 @@ const { registerNewUser } = require('./helpers');
 async function completeQuiz(page, choices) {
   await page.goto('/quiz');
   for (const [index, choice] of choices.entries()) {
-    await page.getByRole('button', { name: new RegExp(choice, 'i') }).first().click();
+    await page.locator('.options').getByRole('button', { name: new RegExp(choice, 'i') }).first().click();
     if (index < choices.length - 1) {
       await expect(page.getByText(`question ${index + 2} of 5`)).toBeVisible();
     }
