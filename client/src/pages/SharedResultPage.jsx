@@ -1,15 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import Diagram from '../components/Diagram';
 import WhyCard from '../components/WhyCard';
 import WellArchitectedReview from '../components/WellArchitectedReview';
+import { exportRecommendationPdf } from '../utils/exportPdf';
+import { exportRecommendationJson } from '../utils/exportJson';
+import { exportDiagramPng } from '../utils/exportPng';
+import { copyMermaidToClipboard } from '../utils/exportMermaid';
 import api from '../api/axios';
 
 export default function SharedResultPage() {
   const { shareId } = useParams();
   const [recommendation, setRecommendation] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [exportingPng, setExportingPng] = useState(false);
+  const [copiedMermaid, setCopiedMermaid] = useState(false);
   const [error, setError] = useState('');
+  const diagramRef = useRef(null);
 
   useEffect(() => {
     // Same protection as ComparePage: navigating between two different
@@ -63,7 +71,9 @@ export default function SharedResultPage() {
       <div className="result-eyebrow">shared recommendation</div>
       <h2 className="result-title">{recommendation.title}</h2>
 
-      <Diagram data={recommendation.diagram} />
+      <div ref={diagramRef} className="diagram-capture-target">
+        <Diagram data={recommendation.diagram} />
+      </div>
 
       <div className="why-grid">
         {recommendation.why.map((w, i) => (
@@ -80,6 +90,73 @@ export default function SharedResultPage() {
       {recommendation.wellArchitected && (
         <WellArchitectedReview data={recommendation.wellArchitected} />
       )}
+
+      <div className="btn-row" style={{ marginTop: 28 }}>
+        <button
+          className="btn"
+          onClick={async () => {
+            try {
+              await exportRecommendationPdf(recommendation);
+              toast.success('PDF downloaded.');
+            } catch (err) {
+              toast.error('Could not generate the PDF.');
+            }
+          }}
+        >
+          export as PDF
+        </button>
+        <button
+          className="btn"
+          onClick={() => {
+            try {
+              exportRecommendationJson(recommendation);
+              toast.success('JSON downloaded.');
+            } catch (err) {
+              toast.error('Could not export the JSON.');
+            }
+          }}
+        >
+          export as JSON
+        </button>
+        <button
+          className="btn"
+          onClick={async () => {
+            try {
+              await copyMermaidToClipboard(recommendation.diagram, recommendation.title);
+              setCopiedMermaid(true);
+              toast.success('Mermaid diagram copied to clipboard.');
+              setTimeout(() => setCopiedMermaid(false), 2500);
+            } catch (err) {
+              toast.error('Could not copy Mermaid syntax.');
+            }
+          }}
+          title="Copy GitHub-compatible Mermaid flowchart syntax"
+        >
+          {copiedMermaid ? '✓ copied Mermaid' : 'copy Mermaid'}
+        </button>
+        <button
+          className="btn"
+          disabled={exportingPng}
+          onClick={async () => {
+            if (!diagramRef.current) return;
+            setExportingPng(true);
+            try {
+              await exportDiagramPng(diagramRef.current, recommendation.title);
+              toast.success('Diagram PNG downloaded.');
+            } catch (err) {
+              toast.error('Could not export diagram image.');
+            } finally {
+              setExportingPng(false);
+            }
+          }}
+          title="Download high-resolution diagram image"
+        >
+          {exportingPng ? 'generating PNG…' : 'export diagram PNG'}
+        </button>
+        <Link to="/quiz" className="btn btn-primary" style={{ textDecoration: 'none', textAlign: 'center' }}>
+          take the quiz yourself &rarr;
+        </Link>
+      </div>
     </div>
   );
 }

@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node src/utils/terraformGenerator.test.js"
+    "test": "node src/utils/terraformGenerator.test.js && node src/utils/exportMermaid.test.js"
   },
   "dependencies": {
     "@sentry/browser": "^10.73.0",

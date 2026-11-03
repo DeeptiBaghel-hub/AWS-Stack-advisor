@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Diagram from '../components/Diagram';
@@ -7,6 +7,8 @@ import WellArchitectedReview from '../components/WellArchitectedReview';
 import { useAuth } from '../context/AuthContext';
 import { exportRecommendationPdf } from '../utils/exportPdf';
 import { exportRecommendationJson } from '../utils/exportJson';
+import { exportDiagramPng } from '../utils/exportPng';
+import { copyMermaidToClipboard } from '../utils/exportMermaid';
 import { describeExtractedAnswers } from '../utils/answerLabels';
 import api from '../api/axios';
 
@@ -16,7 +18,10 @@ export default function ResultsPage() {
   const { user } = useAuth();
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [exportingPng, setExportingPng] = useState(false);
+  const [copiedMermaid, setCopiedMermaid] = useState(false);
   const [error, setError] = useState('');
+  const diagramRef = useRef(null);
 
   const { recommendation, answers, extracted, fromDescription, tweakedFrom } = location.state || {};
 
@@ -62,6 +67,30 @@ export default function ResultsPage() {
     }
   }
 
+  async function handleCopyMermaid() {
+    try {
+      await copyMermaidToClipboard(recommendation.diagram, recommendation.title);
+      setCopiedMermaid(true);
+      toast.success('Mermaid diagram copied to clipboard.');
+      setTimeout(() => setCopiedMermaid(false), 2500);
+    } catch (err) {
+      toast.error('Could not copy Mermaid syntax.');
+    }
+  }
+
+  async function handleExportPng() {
+    if (!diagramRef.current) return;
+    setExportingPng(true);
+    try {
+      await exportDiagramPng(diagramRef.current, recommendation.title);
+      toast.success('Diagram PNG downloaded.');
+    } catch (err) {
+      toast.error('Could not export diagram image.');
+    } finally {
+      setExportingPng(false);
+    }
+  }
+
   return (
     <div className="wrap">
       {fromDescription && (
@@ -89,7 +118,9 @@ export default function ResultsPage() {
       <div className="result-eyebrow">recommended stack</div>
       <h2 className="result-title">{recommendation.title}</h2>
 
-      <Diagram data={recommendation.diagram} />
+      <div ref={diagramRef} className="diagram-capture-target">
+        <Diagram data={recommendation.diagram} />
+      </div>
 
       <div className="why-grid">
         {recommendation.why.map((w, i) => (
@@ -113,6 +144,12 @@ export default function ResultsPage() {
         <button className="btn" onClick={() => navigate('/quiz')}>&larr; start over</button>
         <button className="btn" onClick={handleExportPdf}>export as PDF</button>
         <button className="btn" onClick={handleExportJson}>export as JSON</button>
+        <button className="btn" onClick={handleCopyMermaid} title="Copy GitHub-compatible Mermaid flowchart syntax">
+          {copiedMermaid ? '✓ copied Mermaid' : 'copy Mermaid'}
+        </button>
+        <button className="btn" onClick={handleExportPng} disabled={exportingPng} title="Download high-resolution diagram image">
+          {exportingPng ? 'generating PNG…' : 'export diagram PNG'}
+        </button>
         {user ? (
           <button className="btn btn-primary" onClick={handleSave} disabled={saving || saved}>
             {saved ? 'saved to history' : saving ? 'saving…' : 'save to my history'}
