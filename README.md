@@ -174,6 +174,13 @@ graph TD
   API Gateway 29s timeout limits, RDS connection pool exhaustion with RDS Proxy,
   DynamoDB hot-partitioning, and ElastiCache stampedes). Highlights senior-level
   operational engineering considerations before shipping.
+- **Interactive High-Availability (HA) & Disaster Recovery (DR) Mode Selector** —
+  toggle between **Single-AZ** (Cost-optimized dev), **Multi-AZ Active-Passive**
+  (Production standard with zero data loss RPO=0), and **Multi-Region Active-Active**
+  (Enterprise tier with sub-30s RTO and sub-second RPO). Switching tiers dynamically
+  transforms the live topological DAG to introduce Amazon Route 53 health routing,
+  Amazon Aurora Global Database / DynamoDB Global Tables, and S3 Cross-Region
+  Replication (CRR).
 - **Shareable read-only links** for any saved recommendation — a public
   `/shared/:id` page, no login required to view, that never exposes the
   owning user's identity or raw quiz answers, only the recommendation itself

@@ -1,16 +1,18 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Diagram from '../components/Diagram';
 import WhyCard from '../components/WhyCard';
 import WellArchitectedReview from '../components/WellArchitectedReview';
 import FailureModesReview from '../components/FailureModesReview';
+import HaTierSelector from '../components/HaTierSelector';
 import { useAuth } from '../context/AuthContext';
 import { exportRecommendationPdf } from '../utils/exportPdf';
 import { exportRecommendationJson } from '../utils/exportJson';
 import { exportDiagramPng } from '../utils/exportPng';
 import { exportDiagramSvg } from '../utils/exportSvg';
 import { copyMermaidToClipboard } from '../utils/exportMermaid';
+import { applyHaTierToRecommendation } from '../utils/haDisasterRecovery';
 import { describeExtractedAnswers } from '../utils/answerLabels';
 import api from '../api/axios';
 
@@ -18,6 +20,7 @@ export default function ResultsPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [haTier, setHaTier] = useState('multi-az');
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [exportingPng, setExportingPng] = useState(false);
@@ -25,7 +28,12 @@ export default function ResultsPage() {
   const [error, setError] = useState('');
   const diagramRef = useRef(null);
 
-  const { recommendation, answers, extracted, fromDescription, tweakedFrom } = location.state || {};
+  const { recommendation: rawRecommendation, answers, extracted, fromDescription, tweakedFrom } = location.state || {};
+
+  const recommendation = useMemo(
+    () => applyHaTierToRecommendation(rawRecommendation, haTier),
+    [rawRecommendation, haTier]
+  );
 
   if (!recommendation) {
     return (
@@ -128,6 +136,8 @@ export default function ResultsPage() {
 
       <div className="result-eyebrow">recommended stack</div>
       <h2 className="result-title">{recommendation.title}</h2>
+
+      <HaTierSelector activeTier={haTier} onSelectTier={setHaTier} />
 
       <div ref={diagramRef} className="diagram-capture-target">
         <Diagram data={recommendation.diagram} />

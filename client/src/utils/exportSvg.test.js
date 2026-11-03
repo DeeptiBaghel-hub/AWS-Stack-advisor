@@ -37,3 +37,4 @@ const emptySvg = generateSvg(null);
 assert.ok(emptySvg.includes('No diagram data available'));
 
 console.log('exportSvg: 4 checks passed');
+

@@ -1,25 +1,33 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Diagram from '../components/Diagram';
 import WhyCard from '../components/WhyCard';
 import WellArchitectedReview from '../components/WellArchitectedReview';
 import FailureModesReview from '../components/FailureModesReview';
+import HaTierSelector from '../components/HaTierSelector';
 import { exportRecommendationPdf } from '../utils/exportPdf';
 import { exportRecommendationJson } from '../utils/exportJson';
 import { exportDiagramPng } from '../utils/exportPng';
 import { exportDiagramSvg } from '../utils/exportSvg';
 import { copyMermaidToClipboard } from '../utils/exportMermaid';
+import { applyHaTierToRecommendation } from '../utils/haDisasterRecovery';
 import api from '../api/axios';
 
 export default function SharedResultPage() {
   const { shareId } = useParams();
-  const [recommendation, setRecommendation] = useState(null);
+  const [rawRecommendation, setRawRecommendation] = useState(null);
+  const [haTier, setHaTier] = useState('multi-az');
   const [loading, setLoading] = useState(true);
   const [exportingPng, setExportingPng] = useState(false);
   const [copiedMermaid, setCopiedMermaid] = useState(false);
   const [error, setError] = useState('');
   const diagramRef = useRef(null);
+
+  const recommendation = useMemo(
+    () => applyHaTierToRecommendation(rawRecommendation, haTier),
+    [rawRecommendation, haTier]
+  );
 
   useEffect(() => {
     // Same protection as ComparePage: navigating between two different
@@ -32,7 +40,7 @@ export default function SharedResultPage() {
     api
       .get(`/recommend/shared/${shareId}`)
       .then((res) => {
-        if (!ignore) setRecommendation(res.data.recommendation);
+        if (!ignore) setRawRecommendation(res.data.recommendation);
       })
       .catch((err) => {
         if (!ignore) setError(err.response?.data?.message || 'Could not load this shared recommendation.');
@@ -72,6 +80,8 @@ export default function SharedResultPage() {
 
       <div className="result-eyebrow">shared recommendation</div>
       <h2 className="result-title">{recommendation.title}</h2>
+
+      <HaTierSelector activeTier={haTier} onSelectTier={setHaTier} />
 
       <div ref={diagramRef} className="diagram-capture-target">
         <Diagram data={recommendation.diagram} />
