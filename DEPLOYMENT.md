@@ -1,4 +1,4 @@
-# Deploying Stack Advisor
+# Deploying StackSage
 
 Three pieces, three free tiers: MongoDB Atlas (database), Render (API),
 Vercel (frontend). Total time is usually 20-30 minutes the first time.

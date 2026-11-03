@@ -15,7 +15,7 @@ export default function Navbar() {
   return (
     <div className="navbar">
       <div className="navbar-inner">
-        <Link to="/" className="brand">stack advisor</Link>
+        <Link to="/" className="brand">StackSage</Link>
         <div className="nav-links">
           <Link to="/quiz">quiz</Link>
           <Link to="/services">services</Link>

@@ -58,7 +58,7 @@ export default function HowItWorksPage() {
   return (
     <div className="wrap">
       <div className="eyebrow">architecture</div>
-      <h1>How Stack Advisor actually works</h1>
+      <h1>How StackSage works</h1>
       <p className="sub">
         The same diagram engine built for recommending AWS architectures, pointed at this app's
         own — plus the real decisions behind it, not just a feature list.

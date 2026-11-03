@@ -3,9 +3,11 @@ const { registerNewUser } = require('./helpers');
 
 async function completeQuiz(page, choices) {
   await page.goto('/quiz');
-  for (const choice of choices) {
+  for (const [index, choice] of choices.entries()) {
     await page.getByRole('button', { name: new RegExp(choice, 'i') }).first().click();
-    await page.waitForTimeout(220);
+    if (index < choices.length - 1) {
+      await expect(page.getByText(`question ${index + 2} of 5`)).toBeVisible();
+    }
   }
   await page.waitForURL('/results');
 }

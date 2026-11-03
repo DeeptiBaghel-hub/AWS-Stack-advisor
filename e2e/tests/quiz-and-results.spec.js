@@ -1,9 +1,11 @@
 const { test, expect } = require('@playwright/test');
 
 async function answerQuiz(page, choices) {
-  for (const choice of choices) {
+  for (const [index, choice] of choices.entries()) {
     await page.getByRole('button', { name: new RegExp(choice, 'i') }).first().click();
-    await page.waitForTimeout(220); // matches the app's own auto-advance delay
+    if (index < choices.length - 1) {
+      await expect(page.getByText(`question ${index + 2} of 5`)).toBeVisible();
+    }
   }
 }
 

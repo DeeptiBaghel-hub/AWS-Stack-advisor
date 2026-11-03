@@ -59,6 +59,11 @@ jobs:
       - name: Install server deps
         run: npm ci
         working-directory: backend
+      - name: Seed service catalog
+        run: npm run seed
+        working-directory: backend
+        env:
+          MONGO_URI: mongodb://localhost:27017/aws-stack-advisor-e2e
       - name: Install client deps
         run: npm ci
         working-directory: frontend
