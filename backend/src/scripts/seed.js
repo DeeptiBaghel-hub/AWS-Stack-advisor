@@ -2,7 +2,7 @@
 // Safe to re-run: upserts by slug, so running it again after editing
 // serviceCatalog.js just syncs the changes instead of creating duplicates.
 //
-// Usage: npm run seed   (from the server/ directory, with .env configured)
+// Usage: npm run seed   (from the backend/ directory, with .env configured)
 
 require('dotenv').config();
 const mongoose = require('mongoose');

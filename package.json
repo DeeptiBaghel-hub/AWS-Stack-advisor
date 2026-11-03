@@ -4,16 +4,16 @@
   "private": true,
   "description": "AWS Stack Advisor - Monorepo root",
   "scripts": {
-    "dev:server": "npm --prefix server run dev",
-    "dev:client": "npm --prefix client run dev",
-    "dev": "node -e \"const { spawn } = require('child_process'); const s = spawn('npm', ['--prefix', 'server', 'run', 'dev'], { stdio: 'inherit', shell: true }); const c = spawn('npm', ['--prefix', 'client', 'run', 'dev'], { stdio: 'inherit', shell: true }); process.on('SIGINT', () => { s.kill(); c.kill(); process.exit(); });\"",
-    "seed": "npm --prefix server run seed",
-    "test:server": "npm --prefix server test",
-    "test:integration": "npm --prefix server run test:integration",
-    "test:client": "npm --prefix client test",
-    "test": "npm run test:server && npm run test:client",
-    "test:all": "npm run test:server && npm run test:integration && npm run test:client",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev": "node -e \"const { spawn } = require('child_process'); const b = spawn('npm', ['--prefix', 'backend', 'run', 'dev'], { stdio: 'inherit', shell: true }); const f = spawn('npm', ['--prefix', 'frontend', 'run', 'dev'], { stdio: 'inherit', shell: true }); process.on('SIGINT', () => { b.kill(); f.kill(); process.exit(); });\"",
+    "seed": "npm --prefix backend run seed",
+    "test:backend": "npm --prefix backend test",
+    "test:integration": "npm --prefix backend run test:integration",
+    "test:frontend": "npm --prefix frontend test",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:all": "npm run test:backend && npm run test:integration && npm run test:frontend",
     "test:e2e": "npm --prefix e2e test",
-    "build": "npm --prefix client run build"
+    "build": "npm --prefix frontend run build"
   }
 }

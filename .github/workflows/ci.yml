@@ -7,34 +7,34 @@ on:
     branches: [main]
 
 jobs:
-  server:
+  backend:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: server
+        working-directory: backend
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: server/package-lock.json
+          cache-dependency-path: backend/package-lock.json
       - run: npm ci
       - run: npm test
       - run: npm run test:integration
 
-  client:
+  frontend:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: client
+        working-directory: frontend
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: client/package-lock.json
+          cache-dependency-path: frontend/package-lock.json
       - run: npm ci
       - run: npm test
       - run: npm run build
@@ -58,10 +58,10 @@ jobs:
           cache-dependency-path: e2e/package-lock.json
       - name: Install server deps
         run: npm ci
-        working-directory: server
+        working-directory: backend
       - name: Install client deps
         run: npm ci
-        working-directory: client
+        working-directory: frontend
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm test

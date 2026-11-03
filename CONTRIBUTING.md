@@ -8,20 +8,20 @@ We welcome contributions! Please follow these guidelines to keep the project con
    git clone https://github.com/<your-username>/AWS-Stack-advisor.git
    cd AWS-Stack-advisor
    ```
-2. **Install dependencies** for both server and client.
+2. **Install dependencies** for the backend and frontend.
    ```bash
-   cd server && npm install && cd ..
-   cd client && npm install && cd ..
+   cd backend && npm install && cd ..
+   cd frontend && npm install && cd ..
    ```
 3. **Set up environment** files.
-   - Copy `.env.example` to `.env` in `server/` and fill in `MONGO_URI` and `JWT_SECRET`.
-   - Copy `client/.env.example` to `client/.env` if you need to override defaults.
+   - Copy `.env.example` to `.env` in `backend/` and fill in `MONGO_URI` and `JWT_SECRET`.
+   - Copy `frontend/.env.example` to `frontend/.env` if you need to override defaults.
 4. **Run the application** locally.
    ```bash
    # Start backend
-   cd server && npm run dev
+   cd backend && npm run dev
    # In a new terminal, start frontend
-   cd client && npm run dev
+   cd frontend && npm run dev
    ```
 
 ## Workflow
@@ -32,8 +32,8 @@ We welcome contributions! Please follow these guidelines to keep the project con
 2. **Make changes** following the project's coding style (eslint + prettier).
 3. **Add tests** for new functionality or bug fixes. Run all tests to ensure they pass.
    ```bash
-   cd server && npm test && cd ..
-   cd client && npm test && cd ..
+   cd backend && npm test && cd ..
+   cd frontend && npm test && cd ..
    ```
 4. **Commit** using conventional commits:
    - `feat:` for new features
@@ -50,7 +50,7 @@ We welcome contributions! Please follow these guidelines to keep the project con
 - **Commit messages**: Follow the Conventional Commits specification.
 
 ## Testing
-- **Unit tests** are located in `server/src/utils/*.test.js` and `client/src/**/*.test.js`.
+- **Unit tests** are located in `backend/src/utils/*.test.js` and `frontend/src/**/*.test.js`.
 - **Integration tests** run against an in‑memory MongoDB (`npm run test:integration`).
 - **End‑to‑end tests** are in the `e2e/` directory and use Playwright.
 

@@ -26,7 +26,7 @@ Vercel (frontend). Total time is usually 20-30 minutes the first time.
    GitHub account.
 3. Click **New → Blueprint**, point it at your repo. Render will detect
    `render.yaml` at the root and pre-fill most settings (root directory
-   `server`, build command `npm install`, start command `npm start`, health
+   `backend`, build command `npm install`, start command `npm start`, health
    check on `/api/health`).
 4. When prompted for environment variables, set:
    - `MONGO_URI` — the connection string from step 1
@@ -43,7 +43,7 @@ Vercel (frontend). Total time is usually 20-30 minutes the first time.
    shell, so the simplest option is to run the seed script once from your own
    machine, pointed at the Atlas cluster:
    ```bash
-   cd server
+   cd backend
    MONGO_URI="<your atlas connection string>" node src/scripts/seed.js
    ```
    You should see `Seed complete: 25 created, 0 updated, 25 total in catalog.`
@@ -56,11 +56,11 @@ demo this live — or upgrade off the free tier if that matters for your demo.
 
 1. Create a free account at [vercel.com](https://vercel.com) and connect GitHub.
 2. **Import Project**, select this repo, and set the **root directory** to
-   `client`. Vercel auto-detects the Vite build command and output directory.
+   `frontend`. Vercel auto-detects the Vite build command and output directory.
 3. Add an environment variable:
    - `VITE_API_URL` = `https://<your-render-api-url>/api`
 4. Deploy. Vercel gives you a URL like `https://aws-stack-advisor.vercel.app`.
-   (`vercel.json` in `client/` already handles SPA routing, so refreshing on
+   (`vercel.json` in `frontend/` already handles SPA routing, so refreshing on
    `/services` or `/compare` won't 404.)
 
 ## 4. Connect the two
@@ -78,7 +78,7 @@ real Vercel URL (so CORS allows requests from it), and redeploy the API.
 
 ## Updating the catalog later
 
-Edit `server/src/data/serviceCatalog.js`, then re-run the seed script against
+Edit `backend/src/data/serviceCatalog.js`, then re-run the seed script against
 your Atlas cluster the same way as step 2.6 — it's an upsert by `slug`, so
 re-running it is always safe.
 

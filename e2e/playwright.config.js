@@ -38,13 +38,13 @@ module.exports = defineConfig({
   webServer: [
     {
       command: 'npm run dev',
-      cwd: '../server',
+      cwd: '../backend',
       url: `http://localhost:${API_PORT}/api/health`,
       timeout: 30_000,
       reuseExistingServer: !process.env.CI,
       env: {
         // Auth/assistant rate limits are deliberately tight in production
-        // (see server/src/middleware/rateLimit.js) — a real visitor never
+        // (see backend/src/middleware/rateLimit.js) — a real visitor never
         // registers or messages the assistant dozens of times in 15
         // minutes, but a full E2E run legitimately does, across 50+ tests
         // each spinning up their own user. NODE_ENV=test relaxes those
@@ -59,7 +59,7 @@ module.exports = defineConfig({
     },
     {
       command: 'npm run dev -- --port ' + CLIENT_PORT,
-      cwd: '../client',
+      cwd: '../frontend',
       url: `http://localhost:${CLIENT_PORT}`,
       timeout: 30_000,
       reuseExistingServer: !process.env.CI,

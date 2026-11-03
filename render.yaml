@@ -2,7 +2,7 @@ services:
   - type: web
     name: aws-stack-advisor-api
     runtime: node
-    rootDir: server
+    rootDir: backend
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /api/health
@@ -13,11 +13,7 @@ services:
         generateValue: true
       - key: CLIENT_ORIGIN
         sync: false
-      - key: GEMINI_API_KEY
-        sync: false
       - key: GEMINI_MODEL
         value: gemini-flash-latest
-      - key: SENTRY_DSN
-        sync: false
       - key: LOG_LEVEL
         value: info

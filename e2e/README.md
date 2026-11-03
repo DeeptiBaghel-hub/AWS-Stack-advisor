@@ -1,8 +1,8 @@
 # End-to-end tests
 
-Playwright tests that drive a real browser against the real client and API
-— as opposed to `server/test/api.test.js`, which tests the API directly
-without a browser, or `server/src/utils/*.test.js`, which test pure logic
+Playwright tests that drive a real browser against the real frontend and API
+— as opposed to `backend/test/api.test.js`, which tests the API directly
+without a browser, or `backend/src/utils/*.test.js`, which test pure logic
 in isolation. This is the layer that catches "the API is correct but the
 button is wired to the wrong handler" class of bug.
 
@@ -19,8 +19,8 @@ npx playwright install chromium   # one-time, downloads a browser build
 E2E_MONGO_URI="<your MongoDB connection string>" npm test
 ```
 
-That's it — Playwright automatically starts both the API (`server/`) and
-the client (`client/`) for you before running tests, and shuts them down
+That's it — Playwright automatically starts both the API (`backend/`) and
+the frontend (`frontend/`) for you before running tests, and shuts them down
 afterward. You don't need to run `npm run dev` in either folder yourself
 first.
 
